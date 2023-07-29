@@ -1,5 +1,5 @@
 use near_sdk::{
-  collections::{LazyOption, LookupMap, UnorderedMap, UnorderedSet},
+  collections::{LazyOption, LookupMap, UnorderedSet},
   json_types::Base64VecU8,
   near_bindgen,
   serde::{Deserialize, Serialize},
@@ -8,17 +8,12 @@ use near_sdk::{
 
 use crate::borsh::{self, BorshDeserialize, BorshSerialize};
 
-use super::{
-  certificate::{CertificateId, CertificateMetadata},
-  course::{CourseId, CourseMetadata},
-  skill::{SkillId, SkillMetadata},
-  user::{JsonUser, UserId},
-};
+use super::user::{JsonUser, UserId};
 
 /// The `ELearningContractMetadata` struct represents metadata for an e-learning contract.
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize, Clone)]
 #[serde(crate = "near_sdk::serde")]
-pub struct ELearningContractMetadata {
+pub struct SuperSchoolContractMetadata {
   /// Specification associated with the e-learning contract.
   pub spec: String,
 
@@ -44,50 +39,29 @@ pub struct ELearningContractMetadata {
 /// The `ELearningContract` struct represents an e-learning contract in the system.
 #[near_bindgen]
 #[derive(PanicOnDefault, BorshDeserialize, BorshSerialize)]
-pub struct ELearningContract {
+pub struct SuperSchoolContract {
   /// Account ID of the owner of the contract.
   pub owner_id: AccountId,
 
   /// Metadata associated with the e-learning contract.
-  pub metadata_contract: LazyOption<ELearningContractMetadata>,
+  pub metadata_contract: LazyOption<SuperSchoolContractMetadata>,
 
   /// Storage all user_id of subscriber users -> For count all of users in the system
-  pub subscriber_users: UnorderedSet<UserId>,
+  pub student_user_ids: UnorderedSet<UserId>,
 
   /// Storage all user_id of instructor users. -> For count all of instructors in the system
-  pub intructor_users: UnorderedSet<UserId>,
-
-  /// Map of mentor users. -> For count all of mentors in the system
-  pub mentor_users: UnorderedMap<u32, UserId>,
+  pub intructor_user_ids: UnorderedSet<UserId>,
 
   /// Map of `JsonUser` metadata by user ID.
   pub user_metadata_by_id: LookupMap<UserId, JsonUser>,
-
-  /// Map of course sets by user ID.
-  pub courses_per_user: LookupMap<UserId, UnorderedSet<CourseId>>,
-
-  /// Map of course sets by Instructors
-  pub courses_per_instructor: LookupMap<UserId, UnorderedSet<CourseId>>,
-
-  /// Map of `CourseMetadata` by course ID.
-  pub course_metadata_by_id: LookupMap<CourseId, CourseMetadata>,
-
-  /// Map of certificate sets by user ID.
-  pub certificate_per_user: LookupMap<UserId, UnorderedSet<CertificateId>>,
-
-  /// Map of `CertificateMetadata` by certificate ID.
-  pub certificate_metadata_by_id: LookupMap<CertificateId, CertificateMetadata>,
-
-  /// Map of SkillMetadata by SkillId
-  pub skill_metadata_by_skill_id: LookupMap<SkillId, UnorderedSet<SkillMetadata>>,
 }
 
 /// The `ContractStorageKey` enum represents keys for different persistent collections in the contract storage.
 #[derive(BorshSerialize)]
 pub enum ContractStorageKey {
   ContractMetadata,
-  SubscriberUsers,
-  IntructorUsers,
+  StudentUserIds,
+  IntructorUserIds,
   MentorUsers,
   UserMetadataById,
   CoursesPerUser,
