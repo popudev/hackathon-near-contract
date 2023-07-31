@@ -2,69 +2,74 @@
 
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::AccountId;
+use near_sdk::{AccountId, Balance};
 
-/// The `Roles` enum represents the various roles a user can have within the system.
 #[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, Default, Debug, PartialEq)]
 #[serde(crate = "near_sdk::serde")]
 pub enum Roles {
-  /// The default role. Subscribers typically have access to consume content.
   #[default]
   Student,
-  /// Instructors have the ability to create and manage content, such as courses.
   Instructor,
-  /// Manager have the abilities belong to the system's partner
   Manager,
-  /// Admins have administrative privileges, typically including the ability to manage users and system settings.
   Admin,
 }
 
-/// `UserId` is a type alias for `AccountId`, typically representing a unique identifier for a user in the system.
 pub type UserId = AccountId;
 
-/// This struct represents a user's metadata in the system.
 #[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize, Debug)]
 #[serde(crate = "near_sdk::serde")]
 pub struct UserMetadata {
-  /// Unique identifier of the user.
   pub user_id: UserId,
+  pub username: Option<String>,
+  pub password: Option<String>,
 
-  /// URL or identifier of the user's avatar image, if provided.
   pub avatar: Option<String>,
-
-  /// User's full name, if provided.
+  pub active: bool,
   pub full_name: String,
+  pub date_of_birth: String,
+  pub email: String,
+  pub phone: String,
+  pub national_identity_card: String,
+  pub national_identity_card_date: String,
 
-  /// User's role within the system. Default is Student
   pub role: Roles,
-
-  /// User's total credits.
   pub total_credit: u32,
-
-  /// Unix timestamp (in seconds) when the user account was created.
+  pub balance: Balance,
   pub created_at: u64,
-
-  /// Unix timestamp (in seconds) when the user account was last updated.
   pub updated_at: u64,
 }
 
-/// The `JsonUser` struct provides a comprehensive view of a user in the system.
-/// It includes metadata and associated skills, certificates, and courses.
-#[derive(BorshDeserialize, BorshSerialize, Deserialize, Serialize)]
-#[serde(crate = "near_sdk::serde")]
-pub struct JsonUser {
-  /// Unique identifier for the user, of type `UserId`.
-  pub user_id: UserId,
+pub trait UserFeatures {
+  fn create_user(
+    &mut self,
+    full_name: String,
+    date_of_birth: String,
+    emai: String,
+    phone: String,
+    national_identity_card: String,
+    national_identity_card_date: String,
+  );
 
-  /// Detailed metadata about the user, of type `UserMetadata`.
-  pub metadata: UserMetadata,
-}
+  fn update_user(
+    &mut self,
+    user_id: UserId,
+    full_name: Option<String>,
+    date_of_birth: Option<String>,
+    email: Option<String>,
+    phone: Option<String>,
+    national_identity_card: Option<String>,
+    national_identity_card_date: Option<String>,
+  );
 
-/// The `ImplUser` trait defines a set of behaviors associated with a user in the system.
-pub trait ImplUser {
-  /// Creates a new user with the provided nickname, first name, last name, and bio.
-  /// The fields first_name, last_name, and bio are optional.
-  fn create_student_user(&mut self, full_name: String);
+  fn update_user_metadate(&mut self, user_metadate: &UserMetadata);
 
-  fn get_all_user_metadata(&self, from_index: Option<u32>, limit: Option<u32>) -> Vec<JsonUser>;
+  fn register_student_user(&mut self);
+
+  fn get_all_user_metadata(&self) -> Vec<UserMetadata>;
+
+  fn active_student_user(&mut self, user_id: UserId, username: String, password: String);
+
+  fn get_user_metadata_by_id(&self, id: UserId) -> Option<UserMetadata>;
+
+  fn get_user_metadata_by_username(&self, username: String) -> Option<UserMetadata>;
 }
