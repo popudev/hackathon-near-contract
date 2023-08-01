@@ -2,7 +2,7 @@
 
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::{AccountId, Balance};
+use near_sdk::{AccountId, Balance, Promise};
 
 #[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, Default, Debug, PartialEq)]
 #[serde(crate = "near_sdk::serde")]
@@ -10,7 +10,6 @@ pub enum Roles {
   #[default]
   Student,
   Instructor,
-  Manager,
   Admin,
 }
 
@@ -40,8 +39,22 @@ pub struct UserMetadata {
 }
 
 pub trait UserFeatures {
-  fn create_user(
+  fn create_admin_user(&mut self, username: String, password: String);
+
+  fn create_student_user(
     &mut self,
+    user_id: UserId,
+    full_name: String,
+    date_of_birth: String,
+    emai: String,
+    phone: String,
+    national_identity_card: String,
+    national_identity_card_date: String,
+  );
+
+  fn create_instructor_user(
+    &mut self,
+    user_id: UserId,
     full_name: String,
     date_of_birth: String,
     emai: String,
@@ -63,7 +76,7 @@ pub trait UserFeatures {
 
   fn update_user_metadate(&mut self, user_metadate: &UserMetadata);
 
-  fn register_student_user(&mut self);
+  fn register_student_user(&mut self, major_id: String) -> Promise;
 
   fn get_all_user_metadata(&self) -> Vec<UserMetadata>;
 
@@ -72,4 +85,6 @@ pub trait UserFeatures {
   fn get_user_metadata_by_id(&self, id: UserId) -> Option<UserMetadata>;
 
   fn get_user_metadata_by_username(&self, username: String) -> Option<UserMetadata>;
+
+  fn clean(&mut self);
 }

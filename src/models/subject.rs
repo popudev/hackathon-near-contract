@@ -12,7 +12,7 @@ pub type SubjectId = String;
 #[serde(crate = "near_sdk::serde")]
 pub struct SubjectMetadata {
   pub subject_id: SubjectId,
-  pub instructor_id: UserId,
+  pub instructor_id: Option<UserId>,
   pub prerequisite_subject_id: Option<SubjectId>,
   pub thumbnail: Option<String>,
   pub title: String,
