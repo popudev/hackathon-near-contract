@@ -4,6 +4,8 @@ use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{AccountId, Balance, Promise};
 
+use super::major::MajorId;
+
 #[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, Default, Debug, PartialEq)]
 #[serde(crate = "near_sdk::serde")]
 pub enum Roles {
@@ -31,6 +33,7 @@ pub struct UserMetadata {
   pub national_identity_card: String,
   pub national_identity_card_date: String,
 
+  pub major_id: Option<MajorId>,
   pub role: Roles,
   pub total_credit: u32,
   pub balance: Balance,

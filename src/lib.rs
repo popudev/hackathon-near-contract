@@ -1,5 +1,5 @@
+pub mod application;
 pub mod models;
-pub mod services;
 
 use models::contract::{ContractStorageKey, SuperSchoolContract, SuperSchoolContractExt, SuperSchoolContractMetadata};
 use near_sdk::borsh::{self, BorshSerialize};
@@ -36,6 +36,10 @@ impl SuperSchoolContract {
       major_ids: UnorderedSet::new(ContractStorageKey::MajorIds.try_to_vec().unwrap()),
       major_metadata_by_id: LookupMap::new(ContractStorageKey::MajorMetadataById.try_to_vec().unwrap()),
       subjects_per_major: LookupMap::new(ContractStorageKey::SubjectsPerMajor.try_to_vec().unwrap()),
+      students_per_major: LookupMap::new(ContractStorageKey::StudentsPerMajor.try_to_vec().unwrap()),
+      instructor_per_major: LookupMap::new(ContractStorageKey::InstructorPerMajor.try_to_vec().unwrap()),
+      subject_ids: UnorderedSet::new(ContractStorageKey::SubjectIds.try_to_vec().unwrap()),
+      subject_metadata_by_id: LookupMap::new(ContractStorageKey::SubjectMetadataById.try_to_vec().unwrap()),
     }
   }
 }

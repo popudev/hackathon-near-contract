@@ -3,14 +3,14 @@ use near_sdk::{
   json_types::Base64VecU8,
   near_bindgen,
   serde::{Deserialize, Serialize},
-  AccountId, PanicOnDefault,
+  AccountId, CryptoHash, PanicOnDefault,
 };
 
 use crate::borsh::{self, BorshDeserialize, BorshSerialize};
 
 use super::{
   major::{MajorId, MajorMetadata},
-  subject::SubjectId,
+  subject::{SubjectId, SubjectMetadata},
   user::{UserId, UserMetadata},
 };
 
@@ -39,6 +39,11 @@ pub struct SuperSchoolContract {
   pub major_ids: UnorderedSet<MajorId>,
   pub major_metadata_by_id: LookupMap<MajorId, MajorMetadata>,
   pub subjects_per_major: LookupMap<MajorId, UnorderedSet<SubjectId>>,
+  pub students_per_major: LookupMap<MajorId, UnorderedSet<UserId>>,
+  pub instructor_per_major: LookupMap<MajorId, UnorderedSet<UserId>>,
+
+  pub subject_ids: UnorderedSet<SubjectId>,
+  pub subject_metadata_by_id: LookupMap<SubjectId, SubjectMetadata>,
 }
 
 #[derive(BorshSerialize)]
@@ -50,4 +55,10 @@ pub enum ContractStorageKey {
   MajorIds,
   MajorMetadataById,
   SubjectsPerMajor,
+  SubjectsPerMajorInter { instructor_id_hash: CryptoHash },
+  StudentsPerMajor,
+  InstructorPerMajor,
+
+  SubjectIds,
+  SubjectMetadataById,
 }
