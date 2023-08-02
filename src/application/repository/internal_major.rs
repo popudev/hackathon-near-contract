@@ -11,7 +11,7 @@ impl SuperSchoolContract {
   pub(crate) fn internal_add_student_to_major(&mut self, major_id: &String, user_id: &AccountId) {
     let mut users_set = self.students_per_major.get(&major_id).unwrap_or_else(|| {
       UnorderedSet::new(
-        ContractStorageKey::SubjectsPerMajorInter { instructor_id_hash: hash_string(major_id) }.try_to_vec().unwrap(),
+        ContractStorageKey::SubjectsPerMajorInter { major_id_hash: hash_string(major_id) }.try_to_vec().unwrap(),
       )
     });
 

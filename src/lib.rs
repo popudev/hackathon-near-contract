@@ -30,16 +30,23 @@ impl SuperSchoolContract {
     Self {
       owner_id,
       metadata_contract: LazyOption::new(ContractStorageKey::ContractMetadata.try_to_vec().unwrap(), Some(&metadata)),
+
       user_ids: UnorderedSet::new(ContractStorageKey::UserIds.try_to_vec().unwrap()),
       user_metadata_by_id: LookupMap::new(ContractStorageKey::UserMetadataById.try_to_vec().unwrap()),
       user_metadata_by_username: LookupMap::new(ContractStorageKey::UserMetadataByUsername.try_to_vec().unwrap()),
+
       major_ids: UnorderedSet::new(ContractStorageKey::MajorIds.try_to_vec().unwrap()),
       major_metadata_by_id: LookupMap::new(ContractStorageKey::MajorMetadataById.try_to_vec().unwrap()),
       subjects_per_major: LookupMap::new(ContractStorageKey::SubjectsPerMajor.try_to_vec().unwrap()),
       students_per_major: LookupMap::new(ContractStorageKey::StudentsPerMajor.try_to_vec().unwrap()),
-      instructor_per_major: LookupMap::new(ContractStorageKey::InstructorPerMajor.try_to_vec().unwrap()),
+
       subject_ids: UnorderedSet::new(ContractStorageKey::SubjectIds.try_to_vec().unwrap()),
       subject_metadata_by_id: LookupMap::new(ContractStorageKey::SubjectMetadataById.try_to_vec().unwrap()),
+      students_per_subject: LookupMap::new(ContractStorageKey::StudentsPerSubject.try_to_vec().unwrap()),
+
+      score_ids: UnorderedSet::new(ContractStorageKey::SubjectIds.try_to_vec().unwrap()),
+      scores_metadata_by_id: LookupMap::new(ContractStorageKey::ScoreMetadataById.try_to_vec().unwrap()),
+      scores_per_user: LookupMap::new(ContractStorageKey::ScoresPerUser.try_to_vec().unwrap()),
     }
   }
 }

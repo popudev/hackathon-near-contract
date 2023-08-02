@@ -24,6 +24,7 @@ impl UserFeatures for SuperSchoolContract {
       major_id: None,
       balance: 0,
       role: Roles::Admin,
+      subject_ids_studied: Vec::new(),
       created_at: env::block_timestamp_ms(),
       updated_at: env::block_timestamp_ms(),
     };
@@ -62,6 +63,7 @@ impl UserFeatures for SuperSchoolContract {
       total_credit: 0,
       avatar: None,
       major_id: None,
+      subject_ids_studied: Vec::new(),
       balance: 0,
       role: Roles::Student,
       created_at: env::block_timestamp_ms(),
@@ -102,6 +104,7 @@ impl UserFeatures for SuperSchoolContract {
       avatar: None,
       balance: 0,
       major_id: None,
+      subject_ids_studied: Vec::new(),
       role: Roles::Instructor,
       created_at: env::block_timestamp_ms(),
       updated_at: env::block_timestamp_ms(),
@@ -187,6 +190,21 @@ impl UserFeatures for SuperSchoolContract {
     Promise::new(self.owner_id.clone()).transfer(5)
   }
 
+  #[payable]
+  fn register_instructor_user(&mut self) -> Promise {
+    let user_id = env::signer_account_id();
+    assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
+
+    let mut instructor = self.user_metadata_by_id.get(&user_id).unwrap();
+
+    instructor.balance = 10;
+
+    self.update_user_metadate(&instructor);
+
+    // Phí đăng ký làm giảng viên
+    Promise::new(self.owner_id.clone()).transfer(10)
+  }
+
   fn active_student_user(&mut self, user_id: UserId, username: String, password: String) {
     let caller_id = env::signer_account_id();
 
@@ -194,12 +212,35 @@ impl UserFeatures for SuperSchoolContract {
     assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
 
     let mut student = self.user_metadata_by_id.get(&user_id).unwrap();
+
+    assert!(student.balance == 5, "Sinh viên chưa nộp phí đăng ký");
+
     student.active = true;
+    student.balance = 0;
     student.username = Some(username.clone());
     student.password = Some(password);
 
     self.user_metadata_by_id.insert(&user_id, &student);
     self.user_metadata_by_username.insert(&username, &student);
+  }
+
+  fn active_instructor_user(&mut self, user_id: UserId, username: String, password: String) {
+    let caller_id = env::signer_account_id();
+
+    assert!(self.owner_id == caller_id, "Bạn không có quyền");
+    assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
+
+    let mut instructor = self.user_metadata_by_id.get(&user_id).unwrap();
+
+    assert!(instructor.balance == 10, "Sinh viên chưa nộp phí đăng ký");
+
+    instructor.active = true;
+    instructor.balance = 0;
+    instructor.username = Some(username.clone());
+    instructor.password = Some(password);
+
+    self.user_metadata_by_id.insert(&user_id, &instructor);
+    self.user_metadata_by_username.insert(&username, &instructor);
   }
 
   fn get_all_user_metadata(&self) -> Vec<UserMetadata> {

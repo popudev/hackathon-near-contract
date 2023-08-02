@@ -1,6 +1,6 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::Balance;
+use near_sdk::{Balance, Promise};
 
 use super::user::UserId;
 
@@ -44,6 +44,8 @@ pub trait SubjectFeatures {
     price: Option<Balance>,
     number_of_credits: Option<u64>,
   );
+
+  fn register_subject(&mut self, subject_id: SubjectId);
 
   fn get_all_subject_metadata(&self) -> Vec<SubjectMetadata>;
 }

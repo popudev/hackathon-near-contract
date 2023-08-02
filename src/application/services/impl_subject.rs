@@ -1,6 +1,7 @@
 use crate::models::contract::{SuperSchoolContract, SuperSchoolContractExt};
 use crate::models::subject::{SubjectFeatures, SubjectId, SubjectMetadata};
-use near_sdk::{env, near_bindgen, Balance};
+use crate::models::user::Roles;
+use near_sdk::{env, near_bindgen, Balance, Promise};
 
 #[near_bindgen]
 impl SubjectFeatures for SuperSchoolContract {
@@ -72,6 +73,31 @@ impl SubjectFeatures for SuperSchoolContract {
     }
 
     self.subject_metadata_by_id.insert(&subject_id, &subject);
+  }
+
+  #[payable]
+  fn register_subject(&mut self, subject_id: SubjectId) {
+    let user_id = env::signer_account_id();
+    assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
+    assert!(self.subject_metadata_by_id.contains_key(&subject_id), "Môn học không tồn tại");
+    let student = self.user_metadata_by_id.get(&user_id).unwrap();
+
+    assert!(student.role == Roles::Student, "Bạn không phải là sinh viên");
+
+    let subject = self.subject_metadata_by_id.get(&subject_id).unwrap();
+
+    assert!(subject.instructor_id.is_some(), "Môn học chưa có giảng viên");
+
+    if let Some(prerequisite_subject_id) = subject.prerequisite_subject_id {
+      assert!(
+        student.subject_ids_studied.contains(&prerequisite_subject_id),
+        "Yêu cầu học môn tiên quyết của môn học này"
+      );
+    }
+
+    let salary = (subject.price as f64 * 0.5) as u128;
+    Promise::new(self.owner_id.clone()).transfer(subject.price - salary);
+    Promise::new(subject.instructor_id.unwrap()).transfer(salary);
   }
 
   fn get_all_subject_metadata(&self) -> Vec<SubjectMetadata> {

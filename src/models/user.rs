@@ -5,6 +5,7 @@ use near_sdk::serde::{Deserialize, Serialize};
 use near_sdk::{AccountId, Balance, Promise};
 
 use super::major::MajorId;
+use super::subject::SubjectId;
 
 #[derive(Deserialize, BorshDeserialize, BorshSerialize, Serialize, Default, Debug, PartialEq)]
 #[serde(crate = "near_sdk::serde")]
@@ -34,6 +35,8 @@ pub struct UserMetadata {
   pub national_identity_card_date: String,
 
   pub major_id: Option<MajorId>,
+  pub subject_ids_studied: Vec<SubjectId>,
+
   pub role: Roles,
   pub total_credit: u32,
   pub balance: Balance,
@@ -81,9 +84,13 @@ pub trait UserFeatures {
 
   fn register_student_user(&mut self, major_id: String) -> Promise;
 
+  fn register_instructor_user(&mut self) -> Promise;
+
   fn get_all_user_metadata(&self) -> Vec<UserMetadata>;
 
   fn active_student_user(&mut self, user_id: UserId, username: String, password: String);
+
+  fn active_instructor_user(&mut self, user_id: UserId, username: String, password: String);
 
   fn get_user_metadata_by_id(&self, id: UserId) -> Option<UserMetadata>;
 
