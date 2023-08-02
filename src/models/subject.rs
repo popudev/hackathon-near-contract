@@ -1,8 +1,6 @@
-use std::collections::HashMap;
-
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::serde::{Deserialize, Serialize};
-use near_sdk::Balance;
+use near_sdk::{Balance, Promise};
 
 use super::user::UserId;
 
@@ -19,8 +17,7 @@ pub struct SubjectMetadata {
   pub description: String,
   pub number_of_credits: u64,
   pub price: Balance,
-  pub students_studying_map: HashMap<UserId, u64>,
-  pub students_completed: HashMap<UserId, u64>,
+  pub number_students_studing: u64,
   pub created_at: u64,
   pub updated_at: u64,
 }
@@ -28,12 +25,27 @@ pub struct SubjectMetadata {
 pub trait SubjectFeatures {
   fn create_subject(
     &mut self,
-    subject_id: String,
-    thumnail: Option<String>,
+    subject_id: SubjectId,
+    thumbnail: Option<String>,
+    prerequisite_subject_id: Option<SubjectId>,
     title: String,
     description: String,
+    price: Balance,
     number_of_credits: u64,
-  ) -> SubjectMetadata;
+  );
 
-  fn get_all_major_metadata(&self);
+  fn update_subject(
+    &mut self,
+    subject_id: SubjectId,
+    thumbnail: Option<String>,
+    prerequisite_subject_id: Option<SubjectId>,
+    title: Option<String>,
+    description: Option<String>,
+    price: Option<Balance>,
+    number_of_credits: Option<u64>,
+  );
+
+  fn register_subject(&mut self, subject_id: SubjectId);
+
+  fn get_all_subject_metadata(&self) -> Vec<SubjectMetadata>;
 }
