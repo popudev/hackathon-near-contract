@@ -9,6 +9,7 @@ use near_sdk::{
 use crate::borsh::{self, BorshDeserialize, BorshSerialize};
 
 use super::{
+  degree::DegreeMetadata,
   major::{MajorId, MajorMetadata},
   score::{ScoreId, ScoreMetadata},
   subject::{SubjectId, SubjectMetadata},
@@ -50,6 +51,8 @@ pub struct SuperSchoolContract {
 
   pub score_ids: UnorderedSet<ScoreId>,
   pub scores_metadata_by_id: LookupMap<ScoreId, ScoreMetadata>,
+
+  pub degree_metadata_by_id: LookupMap<UserId, DegreeMetadata>,
 }
 
 #[derive(BorshSerialize)]
@@ -78,4 +81,6 @@ pub enum ContractStorageKey {
   ScoreMetadataById,
   ScoresPerUser,
   ScoresPerUserInter { score_student_id_hash: CryptoHash },
+
+  DegreeMetadata,
 }

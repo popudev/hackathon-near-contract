@@ -38,7 +38,7 @@ pub struct UserMetadata {
   pub subject_ids_studied: Vec<SubjectId>,
 
   pub role: Roles,
-  pub total_credit: u32,
+  pub total_credit: u64,
   pub balance: Balance,
   pub created_at: u64,
   pub updated_at: u64,
