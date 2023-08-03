@@ -29,7 +29,8 @@ impl SubjectFeatures for SuperSchoolContract {
       thumbnail,
       description,
       number_of_credits,
-      price: price * ONE_NEAR,
+      price,
+      balance: None,
       number_students_studing: 0,
       instructor_id: None,
       prerequisite_subject_id,
@@ -75,7 +76,7 @@ impl SubjectFeatures for SuperSchoolContract {
     }
 
     if let Some(price) = price {
-      subject.price = price * ONE_NEAR;
+      subject.price = price;
     }
 
     if let Some(number_of_credits) = number_of_credits {
@@ -95,23 +96,34 @@ impl SubjectFeatures for SuperSchoolContract {
     assert!(student.active == true, "Bạn chưa được phép đăng ký môn học");
     assert!(student.role == Roles::Student, "Bạn không phải là sinh viên");
 
-    let subject = self.subject_metadata_by_id.get(&subject_id).unwrap();
+    let mut subject = self.subject_metadata_by_id.get(&subject_id).unwrap();
 
-    if let Some(prerequisite_subject_id) = subject.prerequisite_subject_id {
+    if let Some(prerequisite_subject_id) = subject.prerequisite_subject_id.clone() {
       assert!(
         student.subject_ids_studied.contains(&prerequisite_subject_id),
         "Yêu cầu học môn tiên quyết của môn học này"
       );
     }
 
+    let price = subject.price;
+    let salary = (subject.price as f64 * 0.5) as u128;
+
+    if let Some(instructor_id) = subject.instructor_id.clone() {
+      Promise::new(self.owner_id.clone()).transfer((price - salary) * ONE_NEAR);
+      Promise::new(instructor_id).transfer(salary * ONE_NEAR);
+    } else {
+      Promise::new(self.owner_id.clone()).transfer(price * ONE_NEAR);
+      subject.balance = Some(salary);
+    }
+
+    subject.number_students_studing += 1;
+
+    self.subject_metadata_by_id.insert(&subject.subject_id, &subject);
     self.internal_add_subject_to_user(&subject_id, &user_id);
     self.internal_add_student_to_subject(&user_id, &subject_id);
-
-    let salary = (subject.price as f64 * 0.5) as u128;
-    Promise::new(self.owner_id.clone()).transfer(subject.price - salary);
-    Promise::new(subject.instructor_id.unwrap()).transfer(salary);
   }
 
+  #[payable]
   fn assignment(&mut self, instructor_id: UserId, subject_id: SubjectId) {
     let signer_account_id = env::signer_account_id();
     assert!(self.owner_id == signer_account_id, "Bạn không có quyền chỉnh sửa thông tin");
@@ -123,9 +135,15 @@ impl SubjectFeatures for SuperSchoolContract {
     assert!(instructor.active == true, "Người dùng này chưa được duyệt");
 
     let mut subject = self.subject_metadata_by_id.get(&subject_id).unwrap();
+
+    if let Some(balance) = subject.balance.clone() {
+      Promise::new(instructor.user_id).transfer(balance * ONE_NEAR);
+    }
+
+    subject.balance = None;
+
     self.internal_add_subject_to_user(&subject_id, &instructor_id);
     subject.instructor_id = Some(instructor_id);
-
     self.subject_metadata_by_id.insert(&subject_id, &subject);
   }
 

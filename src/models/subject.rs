@@ -19,6 +19,7 @@ pub struct SubjectMetadata {
   pub description: String,
   pub number_of_credits: u64,
   pub price: Balance,
+  pub balance: Option<Balance>,
   pub number_students_studing: u64,
   pub created_at: u64,
   pub updated_at: u64,
