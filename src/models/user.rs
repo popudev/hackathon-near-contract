@@ -45,7 +45,17 @@ pub struct UserMetadata {
 }
 
 pub trait UserFeatures {
-  fn create_admin_user(&mut self, username: String, password: String);
+  fn create_admin_user(
+    &mut self,
+    username: String,
+    password: String,
+    full_name: String,
+    date_of_birth: String,
+    email: String,
+    phone: String,
+    national_identity_card: String,
+    national_identity_card_date: String,
+  );
 
   fn create_student_user(
     &mut self,

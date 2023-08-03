@@ -5,7 +5,17 @@ use near_sdk::{env, near_bindgen, Promise, ONE_NEAR};
 
 #[near_bindgen]
 impl UserFeatures for SuperSchoolContract {
-  fn create_admin_user(&mut self, username: String, password: String) {
+  fn create_admin_user(
+    &mut self,
+    username: String,
+    password: String,
+    full_name: String,
+    date_of_birth: String,
+    email: String,
+    phone: String,
+    national_identity_card: String,
+    national_identity_card_date: String,
+  ) {
     let signer_account_id = env::signer_account_id();
     assert!(self.owner_id == signer_account_id, "Bạn không có quyền tạo quản trị viên");
 
@@ -13,12 +23,12 @@ impl UserFeatures for SuperSchoolContract {
       user_id: signer_account_id.clone(),
       username: Some(username.clone()),
       password: Some(password),
-      full_name: "Admin".to_string(),
-      date_of_birth: "1/1/1111".to_string(),
-      email: "admin@admin".to_string(),
-      phone: "0999099099".to_string(),
-      national_identity_card: "123456".to_string(),
-      national_identity_card_date: "12/34".to_string(),
+      full_name,
+      date_of_birth,
+      email,
+      phone,
+      national_identity_card,
+      national_identity_card_date,
       active: true,
       total_credit: 99999,
       avatar: None,
