@@ -1,28 +1,29 @@
 use crate::models::contract::{SuperSchoolContract, SuperSchoolContractExt};
+use crate::models::subject::SubjectId;
 use crate::models::user::{Roles, UserFeatures, UserId, UserMetadata};
-use near_sdk::{env, near_bindgen, Promise};
+use near_sdk::{env, near_bindgen, Promise, ONE_NEAR};
 
 #[near_bindgen]
 impl UserFeatures for SuperSchoolContract {
   fn create_admin_user(&mut self, username: String, password: String) {
     let signer_account_id = env::signer_account_id();
-    assert!(self.owner_id == signer_account_id, "Bạn không có quyền thêm người dùng");
+    assert!(self.owner_id == signer_account_id, "Bạn không có quyền tạo quản trị viên");
 
     let user_metadata = UserMetadata {
       user_id: signer_account_id.clone(),
       username: Some(username.clone()),
       password: Some(password),
-      full_name: "".to_string(),
-      date_of_birth: "".to_string(),
-      email: "".to_string(),
-      phone: "".to_string(),
-      national_identity_card: "".to_string(),
-      national_identity_card_date: "".to_string(),
+      full_name: "Admin".to_string(),
+      date_of_birth: "1/1/1111".to_string(),
+      email: "admin@admin".to_string(),
+      phone: "0999099099".to_string(),
+      national_identity_card: "123456".to_string(),
+      national_identity_card_date: "12/34".to_string(),
       active: true,
-      total_credit: 0,
+      total_credit: 99999,
       avatar: None,
       major_id: None,
-      balance: 0,
+      balance: 9999,
       role: Roles::Admin,
       subject_ids_studied: Vec::new(),
       created_at: env::block_timestamp_ms(),
@@ -187,7 +188,7 @@ impl UserFeatures for SuperSchoolContract {
     self.internal_add_student_to_major(&major_id, &user_id);
 
     // Phí đăng ký nhập học
-    Promise::new(self.owner_id.clone()).transfer(5)
+    Promise::new(self.owner_id.clone()).transfer(5 * ONE_NEAR)
   }
 
   #[payable]
@@ -206,9 +207,9 @@ impl UserFeatures for SuperSchoolContract {
   }
 
   fn active_student_user(&mut self, user_id: UserId, username: String, password: String) {
-    let caller_id = env::signer_account_id();
+    let signer_account_id = env::signer_account_id();
 
-    assert!(self.owner_id == caller_id, "Bạn không có quyền");
+    assert!(self.owner_id == signer_account_id, "Bạn không có quyền");
     assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
 
     let mut student = self.user_metadata_by_id.get(&user_id).unwrap();
@@ -225,14 +226,14 @@ impl UserFeatures for SuperSchoolContract {
   }
 
   fn active_instructor_user(&mut self, user_id: UserId, username: String, password: String) {
-    let caller_id = env::signer_account_id();
+    let signer_account_id = env::signer_account_id();
 
-    assert!(self.owner_id == caller_id, "Bạn không có quyền");
+    assert!(self.owner_id == signer_account_id, "Bạn không có quyền");
     assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
 
     let mut instructor = self.user_metadata_by_id.get(&user_id).unwrap();
 
-    assert!(instructor.balance == 10, "Sinh viên chưa nộp phí đăng ký");
+    assert!(instructor.balance == 10, "Giảng viên này chưa nộp phí đăng ký");
 
     instructor.active = true;
     instructor.balance = 0;
@@ -267,6 +268,21 @@ impl UserFeatures for SuperSchoolContract {
     } else {
       None
     }
+  }
+
+  fn get_all_student_user_metadata_by_subject_id(
+    &self,
+    subject_id: SubjectId,
+  ) -> Vec<UserMetadata> {
+    let mut all_user = Vec::new();
+
+    if let Some(user_ids) = self.students_per_subject.get(&subject_id) {
+      for user_id in user_ids.iter() {
+        all_user.push(self.user_metadata_by_id.get(&user_id).unwrap());
+      }
+    }
+
+    all_user
   }
 
   fn clean(&mut self) {

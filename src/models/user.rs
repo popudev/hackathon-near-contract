@@ -96,5 +96,8 @@ pub trait UserFeatures {
 
   fn get_user_metadata_by_username(&self, username: String) -> Option<UserMetadata>;
 
+  fn get_all_student_user_metadata_by_subject_id(&self, subject_id: SubjectId)
+    -> Vec<UserMetadata>;
+
   fn clean(&mut self);
 }
