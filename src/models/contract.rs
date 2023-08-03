@@ -36,11 +36,13 @@ pub struct SuperSchoolContract {
   pub user_ids: UnorderedSet<UserId>,
   pub user_metadata_by_id: LookupMap<UserId, UserMetadata>,
   pub user_metadata_by_username: LookupMap<String, UserMetadata>,
+  pub subjects_per_user: LookupMap<UserId, UnorderedSet<SubjectId>>,
+  pub scores_per_user: LookupMap<UserId, UnorderedSet<ScoreId>>,
 
   pub major_ids: UnorderedSet<MajorId>,
   pub major_metadata_by_id: LookupMap<MajorId, MajorMetadata>,
-  pub subjects_per_major: LookupMap<MajorId, UnorderedSet<SubjectId>>,
   pub students_per_major: LookupMap<MajorId, UnorderedSet<UserId>>,
+  pub subjects_per_major: LookupMap<MajorId, UnorderedSet<SubjectId>>,
 
   pub subject_ids: UnorderedSet<SubjectId>,
   pub subject_metadata_by_id: LookupMap<SubjectId, SubjectMetadata>,
@@ -48,7 +50,6 @@ pub struct SuperSchoolContract {
 
   pub score_ids: UnorderedSet<ScoreId>,
   pub scores_metadata_by_id: LookupMap<ScoreId, ScoreMetadata>,
-  pub scores_per_user: LookupMap<UserId, UnorderedSet<ScoreId>>,
 }
 
 #[derive(BorshSerialize)]
@@ -57,20 +58,24 @@ pub enum ContractStorageKey {
   UserIds,
   UserMetadataById,
   UserMetadataByUsername,
+  SubjectsPerUser,
+  SubjectsPerUserInter { subject_student_id_hash: CryptoHash },
+
   MajorIds,
   MajorMetadataById,
   StudentsPerMajor,
+  StudentsPerMajorInter { major_student_id_hash: CryptoHash },
   InstructorPerMajor,
 
   SubjectIds,
   SubjectMetadataById,
   SubjectsPerMajor,
-  SubjectsPerMajorInter { major_id_hash: CryptoHash },
+  SubjectsPerMajorInter { subject_major_id_hash: CryptoHash },
   StudentsPerSubject,
-  StudentsPerSubjectInter { student_id_hash: CryptoHash },
+  StudentsPerSubjectInter { student_subject_id_hash: CryptoHash },
 
   ScoreIds,
   ScoreMetadataById,
   ScoresPerUser,
-  ScoresPerUserInter { student_id_hash: CryptoHash },
+  ScoresPerUserInter { score_student_id_hash: CryptoHash },
 }
