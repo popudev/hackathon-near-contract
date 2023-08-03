@@ -11,18 +11,7 @@ impl SuperSchoolContract {
   #[init]
   pub fn init() -> Self {
     let owner_id = env::signer_account_id();
-    Self::new(
-      owner_id,
-      SuperSchoolContractMetadata {
-        spec: "Super School v1.0.0".to_string(),
-        name: "SaiGon University".to_string(),
-        symbol: "SGU".to_string(),
-        icon: None,
-        base_uri: None,
-        reference: None,
-        reference_hash: None,
-      },
-    )
+    Self::new(owner_id, SuperSchoolContractMetadata { spec: "Super School v1.0.0".to_string(), name: "SaiGon University".to_string(), symbol: "SGU".to_string(), icon: None, base_uri: None, reference: None, reference_hash: None })
   }
 
   #[init]
@@ -34,6 +23,7 @@ impl SuperSchoolContract {
       user_ids: UnorderedSet::new(ContractStorageKey::UserIds.try_to_vec().unwrap()),
       user_metadata_by_id: LookupMap::new(ContractStorageKey::UserMetadataById.try_to_vec().unwrap()),
       user_metadata_by_username: LookupMap::new(ContractStorageKey::UserMetadataByUsername.try_to_vec().unwrap()),
+      subjects_per_user: LookupMap::new(ContractStorageKey::SubjectsPerUser.try_to_vec().unwrap()),
 
       major_ids: UnorderedSet::new(ContractStorageKey::MajorIds.try_to_vec().unwrap()),
       major_metadata_by_id: LookupMap::new(ContractStorageKey::MajorMetadataById.try_to_vec().unwrap()),
