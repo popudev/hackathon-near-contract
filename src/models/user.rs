@@ -38,14 +38,24 @@ pub struct UserMetadata {
   pub subject_ids_studied: Vec<SubjectId>,
 
   pub role: Roles,
-  pub total_credit: u32,
+  pub total_credit: u64,
   pub balance: Balance,
   pub created_at: u64,
   pub updated_at: u64,
 }
 
 pub trait UserFeatures {
-  fn create_admin_user(&mut self, username: String, password: String);
+  fn create_admin_user(
+    &mut self,
+    username: String,
+    password: String,
+    full_name: String,
+    date_of_birth: String,
+    email: String,
+    phone: String,
+    national_identity_card: String,
+    national_identity_card_date: String,
+  );
 
   fn create_student_user(
     &mut self,

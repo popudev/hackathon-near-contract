@@ -3,7 +3,11 @@
 use near_sdk::{env, AccountId, CryptoHash};
 use unidecode::unidecode;
 
-use crate::models::{subject::SubjectId, user::UserId};
+use crate::models::{
+  major::{self, MajorId},
+  subject::SubjectId,
+  user::UserId,
+};
 
 pub mod internal_major;
 pub mod internal_score;
@@ -20,6 +24,14 @@ pub(crate) fn convert_to_score_id(subject_id: &SubjectId, student_id: &UserId) -
   let cert = "score ".to_ascii_lowercase();
   let student_convert = student_id.to_string().to_ascii_lowercase();
   let lowercased = subject_id.to_string().to_ascii_lowercase();
+  let result = cert + &lowercased + " " + &student_convert;
+  result.replace(' ', "_")
+}
+
+pub(crate) fn convert_to_degree_id(student_id: &UserId, major_id: &MajorId) -> String {
+  let cert = "degree ".to_ascii_lowercase();
+  let student_convert = student_id.to_string().to_ascii_lowercase();
+  let lowercased = major_id.to_string().to_ascii_lowercase();
   let result = cert + &lowercased + " " + &student_convert;
   result.replace(' ', "_")
 }

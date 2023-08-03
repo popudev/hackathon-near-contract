@@ -1,3 +1,4 @@
+pub mod impl_degree;
 pub mod impl_major;
 pub mod impl_score;
 pub mod impl_subject;

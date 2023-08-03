@@ -5,7 +5,17 @@ use near_sdk::{env, near_bindgen, Promise, ONE_NEAR};
 
 #[near_bindgen]
 impl UserFeatures for SuperSchoolContract {
-  fn create_admin_user(&mut self, username: String, password: String) {
+  fn create_admin_user(
+    &mut self,
+    username: String,
+    password: String,
+    full_name: String,
+    date_of_birth: String,
+    email: String,
+    phone: String,
+    national_identity_card: String,
+    national_identity_card_date: String,
+  ) {
     let signer_account_id = env::signer_account_id();
     assert!(self.owner_id == signer_account_id, "Bạn không có quyền tạo quản trị viên");
 
@@ -13,12 +23,12 @@ impl UserFeatures for SuperSchoolContract {
       user_id: signer_account_id.clone(),
       username: Some(username.clone()),
       password: Some(password),
-      full_name: "Admin".to_string(),
-      date_of_birth: "1/1/1111".to_string(),
-      email: "admin@admin".to_string(),
-      phone: "0999099099".to_string(),
-      national_identity_card: "123456".to_string(),
-      national_identity_card_date: "12/34".to_string(),
+      full_name,
+      date_of_birth,
+      email,
+      phone,
+      national_identity_card,
+      national_identity_card_date,
       active: true,
       total_credit: 99999,
       avatar: None,
@@ -171,8 +181,11 @@ impl UserFeatures for SuperSchoolContract {
   #[payable]
   fn register_student_user(&mut self, major_id: String) -> Promise {
     let user_id = env::signer_account_id();
+    let deposit = env::account_balance();
     assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
     assert!(self.major_metadata_by_id.contains_key(&major_id), "Ngành học không tồn tại");
+    assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
+    assert!(deposit >= 5 * ONE_NEAR, "Bạn chuyển không đủ NEAR");
 
     let mut student = self.user_metadata_by_id.get(&user_id).unwrap();
     assert!(student.major_id.is_none(), "Bạn đã đăng ký ngành học");
@@ -194,7 +207,9 @@ impl UserFeatures for SuperSchoolContract {
   #[payable]
   fn register_instructor_user(&mut self) -> Promise {
     let user_id = env::signer_account_id();
+    let deposit = env::account_balance();
     assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
+    assert!(deposit >= 10 * ONE_NEAR, "Bạn chuyển không đủ NEAR");
 
     let mut instructor = self.user_metadata_by_id.get(&user_id).unwrap();
 
