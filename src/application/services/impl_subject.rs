@@ -96,7 +96,9 @@ impl SubjectFeatures for SuperSchoolContract {
     assert!(student.active == true, "Bạn chưa được phép đăng ký môn học");
     assert!(student.role == Roles::Student, "Bạn không phải là sinh viên");
 
+    let deposit = env::account_balance();
     let mut subject = self.subject_metadata_by_id.get(&subject_id).unwrap();
+    assert!(deposit >= subject.price * ONE_NEAR, "Bạn chuyển không đủ NEAR");
 
     if let Some(prerequisite_subject_id) = subject.prerequisite_subject_id.clone() {
       assert!(

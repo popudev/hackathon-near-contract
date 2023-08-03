@@ -181,8 +181,11 @@ impl UserFeatures for SuperSchoolContract {
   #[payable]
   fn register_student_user(&mut self, major_id: String) -> Promise {
     let user_id = env::signer_account_id();
+    let deposit = env::account_balance();
     assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
     assert!(self.major_metadata_by_id.contains_key(&major_id), "Ngành học không tồn tại");
+    assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
+    assert!(deposit >= 5 * ONE_NEAR, "Bạn chuyển không đủ NEAR");
 
     let mut student = self.user_metadata_by_id.get(&user_id).unwrap();
     assert!(student.major_id.is_none(), "Bạn đã đăng ký ngành học");
@@ -204,7 +207,9 @@ impl UserFeatures for SuperSchoolContract {
   #[payable]
   fn register_instructor_user(&mut self) -> Promise {
     let user_id = env::signer_account_id();
+    let deposit = env::account_balance();
     assert!(self.user_metadata_by_id.contains_key(&user_id), "Người dùng không tồn tại");
+    assert!(deposit >= 10 * ONE_NEAR, "Bạn chuyển không đủ NEAR");
 
     let mut instructor = self.user_metadata_by_id.get(&user_id).unwrap();
 
