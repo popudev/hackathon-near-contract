@@ -19,9 +19,21 @@ pub struct ScoreMetadata {
 }
 
 pub trait ScoreFeatures {
-  fn create_score(&mut self, subject_id: SubjectId, student_id: UserId, score: u64);
+  fn create_score(
+    &mut self,
+    instructor_id: UserId,
+    student_id: UserId,
+    subject_id: SubjectId,
+    score: u64,
+  );
 
-  fn update_score(&mut self, subject_id: SubjectId, student_id: UserId, score: u64);
+  fn update_score(
+    &mut self,
+    instructor_id: UserId,
+    student_id: UserId,
+    subject_id: SubjectId,
+    score: u64,
+  );
 
   fn get_all_score_metadata_by_user_id(&self, user_id: UserId) -> Vec<ScoreMetadata>;
 

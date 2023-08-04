@@ -7,16 +7,23 @@ use near_sdk::{env, near_bindgen};
 
 #[near_bindgen]
 impl ScoreFeatures for SuperSchoolContract {
-  fn create_score(&mut self, subject_id: SubjectId, student_id: UserId, score: u64) {
+  fn create_score(
+    &mut self,
+    instructor_id: UserId,
+    student_id: UserId,
+    subject_id: SubjectId,
+    score: u64,
+  ) {
     let signer_account_id = env::signer_account_id();
+    assert!(self.owner_id == signer_account_id, "Bạn không phải là Admin");
     assert!(self.user_metadata_by_id.contains_key(&student_id), "Sinh viên không tồn tại");
-    assert!(self.user_metadata_by_id.contains_key(&signer_account_id), "Giảng viên không tồn tại");
+    assert!(self.user_metadata_by_id.contains_key(&instructor_id), "Giảng viên không tồn tại");
     assert!(self.subject_metadata_by_id.contains_key(&subject_id), "Môn học không tồn tại");
 
     let mut student = self.user_metadata_by_id.get(&student_id).unwrap();
     assert!(student.active == true, "Sinh viên chưa được duyệt");
 
-    let instructor = self.user_metadata_by_id.get(&signer_account_id).unwrap();
+    let instructor = self.user_metadata_by_id.get(&instructor_id).unwrap();
     assert!(instructor.active == true, "Giảng viên chưa được duyệt");
 
     let subject = self.subject_metadata_by_id.get(&subject_id).unwrap();
@@ -25,7 +32,7 @@ impl ScoreFeatures for SuperSchoolContract {
       score_id: convert_to_score_id(&subject_id, &student_id),
       subject_id,
       student_id,
-      instructor_id: signer_account_id,
+      instructor_id,
       score,
       created_at: env::block_timestamp_ms(),
       updated_at: env::block_timestamp_ms(),
@@ -42,22 +49,30 @@ impl ScoreFeatures for SuperSchoolContract {
     self.internal_add_score_to_subject(&score_metadata.score_id, &score_metadata.subject_id);
   }
 
-  fn update_score(&mut self, subject_id: SubjectId, student_id: UserId, score: u64) {
+  fn update_score(
+    &mut self,
+    instructor_id: UserId,
+    student_id: UserId,
+    subject_id: SubjectId,
+    score: u64,
+  ) {
     let signer_account_id = env::signer_account_id();
+    assert!(self.owner_id == signer_account_id, "Bạn không phải là Admin");
     assert!(self.user_metadata_by_id.contains_key(&student_id), "Sinh viên không tồn tại");
-    assert!(self.user_metadata_by_id.contains_key(&signer_account_id), "Giảng viên không tồn tại");
+    assert!(self.user_metadata_by_id.contains_key(&instructor_id), "Giảng viên không tồn tại");
+    assert!(self.subject_metadata_by_id.contains_key(&subject_id), "Môn học không tồn tại");
 
     let mut student = self.user_metadata_by_id.get(&student_id).unwrap();
     assert!(student.active == true, "Sinh viên chưa được duyệt");
 
-    let instructor = self.user_metadata_by_id.get(&signer_account_id).unwrap();
+    let instructor = self.user_metadata_by_id.get(&instructor_id).unwrap();
     assert!(instructor.active == true, "Giảng viên chưa được duyệt");
 
     let score_metadata = ScoreMetadata {
       score_id: convert_to_score_id(&subject_id, &student_id),
       subject_id,
       student_id,
-      instructor_id: signer_account_id,
+      instructor_id,
       score,
       created_at: env::block_timestamp_ms(),
       updated_at: env::block_timestamp_ms(),
