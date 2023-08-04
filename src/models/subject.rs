@@ -20,7 +20,7 @@ pub struct SubjectMetadata {
   pub number_of_credits: u64,
   pub price: Balance,
   pub balance: Option<Balance>,
-  pub number_students_studing: u64,
+  pub number_students_studying: u64,
   pub created_at: u64,
   pub updated_at: u64,
 }
@@ -59,4 +59,6 @@ pub trait SubjectFeatures {
   fn get_all_subject_metadata_by_major_id(&self, major_id: MajorId) -> Vec<SubjectMetadata>;
 
   fn get_all_subject_metadata_by_user_id(&self, user_id: UserId) -> Vec<SubjectMetadata>;
+
+  fn clean_subject(&mut self);
 }

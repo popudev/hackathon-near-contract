@@ -25,5 +25,5 @@ pub trait ScoreFeatures {
 
   fn get_all_score_metadata_by_user_id(&self, user_id: UserId) -> Vec<ScoreMetadata>;
 
-  // fn get_all_score_metadata(&self) -> Vec<ScoreMetadata>;
+  fn get_all_score_metadata_by_subject_id(&self, subject_id: SubjectId) -> Vec<ScoreMetadata>;
 }

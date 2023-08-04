@@ -39,6 +39,7 @@ impl ScoreFeatures for SuperSchoolContract {
 
     self.scores_metadata_by_id.insert(&score_metadata.score_id, &score_metadata);
     self.internal_add_score_to_user(&score_metadata.student_id, &score_metadata.score_id);
+    self.internal_add_score_to_subject(&score_metadata.score_id, &score_metadata.subject_id);
   }
 
   fn update_score(&mut self, subject_id: SubjectId, student_id: UserId, score: u64) {
@@ -75,6 +76,18 @@ impl ScoreFeatures for SuperSchoolContract {
     let mut all_score = Vec::new();
 
     if let Some(score_ids) = self.scores_per_user.get(&user_id) {
+      for score_id in score_ids.iter() {
+        all_score.push(self.scores_metadata_by_id.get(&score_id).unwrap());
+      }
+    }
+
+    all_score
+  }
+
+  fn get_all_score_metadata_by_subject_id(&self, subject_id: SubjectId) -> Vec<ScoreMetadata> {
+    let mut all_score = Vec::new();
+
+    if let Some(score_ids) = self.scores_per_subject.get(&subject_id) {
       for score_id in score_ids.iter() {
         all_score.push(self.scores_metadata_by_id.get(&score_id).unwrap());
       }
