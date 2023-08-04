@@ -31,7 +31,7 @@ impl SubjectFeatures for SuperSchoolContract {
       number_of_credits,
       price,
       balance: None,
-      number_students_studing: 0,
+      number_students_studying: 0,
       instructor_id: None,
       prerequisite_subject_id,
       created_at: env::block_timestamp_ms(),
@@ -118,7 +118,7 @@ impl SubjectFeatures for SuperSchoolContract {
       subject.balance = Some(salary);
     }
 
-    subject.number_students_studing += 1;
+    subject.number_students_studying += 1;
 
     self.subject_metadata_by_id.insert(&subject.subject_id, &subject);
     self.internal_add_subject_to_user(&subject_id, &user_id);
@@ -176,10 +176,18 @@ impl SubjectFeatures for SuperSchoolContract {
 
     if let Some(subject_ids) = self.subjects_per_major.get(&major_id) {
       for subject_id in subject_ids.iter() {
-        all_subject.push(self.subject_metadata_by_id.get(&subject_id).unwrap());
+        if let Some(subject_metadata)  = self.subject_metadata_by_id.get(&subject_id) {
+          all_subject.push(subject_metadata);
+        }
       }
     }
 
     all_subject
+  }
+  fn clean_subject(&mut self) {
+    for subject_id in self.subject_ids.iter() {
+      self.subject_metadata_by_id.remove(&subject_id);
+    }
+    self.subject_ids.clear();
   }
 }

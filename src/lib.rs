@@ -63,6 +63,9 @@ impl SuperSchoolContract {
       students_per_subject: LookupMap::new(
         ContractStorageKey::StudentsPerSubject.try_to_vec().unwrap(),
       ),
+      scores_per_subject: LookupMap::new(
+        ContractStorageKey::ScoresPerSubject.try_to_vec().unwrap(),
+      ),
 
       score_ids: UnorderedSet::new(ContractStorageKey::SubjectIds.try_to_vec().unwrap()),
       scores_metadata_by_id: LookupMap::new(

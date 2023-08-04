@@ -48,6 +48,7 @@ pub struct SuperSchoolContract {
   pub subject_ids: UnorderedSet<SubjectId>,
   pub subject_metadata_by_id: LookupMap<SubjectId, SubjectMetadata>,
   pub students_per_subject: LookupMap<SubjectId, UnorderedSet<UserId>>,
+  pub scores_per_subject: LookupMap<SubjectId, UnorderedSet<ScoreId>>,
 
   pub score_ids: UnorderedSet<ScoreId>,
   pub scores_metadata_by_id: LookupMap<ScoreId, ScoreMetadata>,
@@ -76,6 +77,8 @@ pub enum ContractStorageKey {
   SubjectsPerMajorInter { subject_major_id_hash: CryptoHash },
   StudentsPerSubject,
   StudentsPerSubjectInter { student_subject_id_hash: CryptoHash },
+  ScoresPerSubject,
+  ScoresPerSubjectInter { score_subject_id_hash: CryptoHash },
 
   ScoreIds,
   ScoreMetadataById,

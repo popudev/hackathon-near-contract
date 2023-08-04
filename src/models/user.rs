@@ -109,5 +109,5 @@ pub trait UserFeatures {
   fn get_all_student_user_metadata_by_subject_id(&self, subject_id: SubjectId)
     -> Vec<UserMetadata>;
 
-  fn clean(&mut self);
+  fn clean_user(&mut self);
 }

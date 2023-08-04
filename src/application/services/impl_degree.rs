@@ -23,7 +23,7 @@ impl DegreeFeatures for SuperSchoolContract {
     let major = self.major_metadata_by_id.get(&major_id).unwrap();
 
     assert!(
-      student.total_credit == major.number_of_credits_required,
+      student.total_credit >= major.number_of_credits_required,
       "Bạn chưa đủ điều kiện để lấy bằng cấp"
     );
 

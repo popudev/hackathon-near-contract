@@ -300,7 +300,7 @@ impl UserFeatures for SuperSchoolContract {
     all_user
   }
 
-  fn clean(&mut self) {
+  fn clean_user(&mut self) {
     for user_id in self.user_ids.iter() {
       self.user_metadata_by_id.remove(&user_id);
     }
