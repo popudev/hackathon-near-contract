@@ -1,7 +1,7 @@
 use crate::application::repository::convert_to_degree_id;
 use crate::models::contract::{SuperSchoolContract, SuperSchoolContractExt};
 use crate::models::degree::{DegreeFeatures, DegreeMetadata, DegreeType};
-use crate::models::user::Roles;
+use crate::models::user::{Roles, UserId};
 use near_sdk::{env, near_bindgen, Promise, ONE_NEAR};
 
 #[near_bindgen]
@@ -65,7 +65,7 @@ impl DegreeFeatures for SuperSchoolContract {
   }
 
   fn get_degree_metadata(&self) -> DegreeMetadata {
-    let user_id = env::signer_account_id();
+    let user_id = env::current_account_id();
     assert!(self.degree_metadata_by_id.contains_key(&user_id), "Người dùng chưa được cấp băng cấp");
 
     self.degree_metadata_by_id.get(&user_id).unwrap()
